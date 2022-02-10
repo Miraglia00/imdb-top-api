@@ -4,7 +4,9 @@
   "description": "Simple NodeJS app, which scrape IMDb`s top 250 movies and tv shows id, and insert into a MongoDB. Also serves as an API to get a random id, or get all ids of the movies or tv shows.",
   "main": "index.js",
   "scripts": {
-    "dev": "node app.js",
+    "dev": "nodemon app.js",
+    "scrape": "node scraper/scraper.js",
+    "delete": "node scraper/deleteData.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -15,5 +17,8 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "mongoose": "^6.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
