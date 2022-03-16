@@ -1,14 +1,14 @@
 const schema = require('../database/schemas/showSchema');
 const db = require('../database/db');
-const movieModel = db.model('movies', schema);
+const tvShowsModel = db.model('tvshows', schema);
 
-async function getAllMovie(limit=null) {
+async function getAllTVShows(limit=null) {
     limit = (typeof limit === 'number') ? limit : null;
-    let data = await movieModel.find({}).limit(limit);
+    let data = await tvShowsModel.find({}).limit(limit);
 
     return data;
 }
 
 module.exports = {
-    getAllMovie
+    getAllTVShows
 }
