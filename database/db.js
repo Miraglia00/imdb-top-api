@@ -1,4 +1,3 @@
-const req = require('express/lib/request');
 const mongoose = require('mongoose');
 
 require('dotenv/config');
