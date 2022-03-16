@@ -8,7 +8,7 @@ router.get('/', async (req,res) => {
     let limit = req.query.limit;
     let limit_a = limit - Math.floor((Math.random() * (limit - 1) + 1));
     let limit_b = limit - limit_a;
-    console.log(limit_a, limit_b);
+
     let movies = await getAllMovie(limit_a);
     let tvshows = await getAllTVShows(limit_b);
     let result = movies.concat(tvshows);
