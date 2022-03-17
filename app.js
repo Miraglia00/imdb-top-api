@@ -41,5 +41,5 @@ app.use(
 
 app.use(notFound);
 app.use(handleErrors);
-
-app.listen(4444, () => console.log('[SERVER]: Listening on port 4444....'));
+const port = process.env.PORT || 4444;
+app.listen(port, () => console.log(`[SERVER]: Listening on port ${port}....`));
