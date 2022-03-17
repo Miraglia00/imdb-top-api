@@ -34,7 +34,9 @@ app.get('/', async (req, res) => {
 app.use(
     "/api-docs",
     swaggerUi.serve,
-    swaggerUi.setup(swaggerJsdoc(swaggerConfig))
+    swaggerUi.setup(swaggerJsdoc(swaggerConfig), {swaggerOptions: {
+        supportedSubmitMethods: ['get']
+    }})
 );
 
 app.use(notFound);
