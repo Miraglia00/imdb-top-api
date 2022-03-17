@@ -7,7 +7,7 @@ const validateId = (id) => {
 };
 
 const showSchema = new Schema({
-    movie_id: {type: String, validate: [validateId, "Must be a valid IMDb id!"]},
+    movie_id: {type: String, validate: [validateId, "Must be a valid IMDb id!"], required: true},
     titles: {type: Map, of: String, default: null},
     short_plot: {type: String, default: null},
     genre: {type: String, default: null},
