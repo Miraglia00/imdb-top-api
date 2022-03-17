@@ -36,7 +36,10 @@
  *        description: Start or voice actors in the show.
  *       imdb_score:
  *        type: string
- *        desciption: Official score of the show from IMDb.
+ *        description: Official score of the show from IMDb.
+ *       type:
+ *        type: string
+ *        description: Type of the show. Pre-defined enum values [movie,tvshow].      
  *      example:
  *       movie_id: tt0111161
  *       titles:
@@ -49,28 +52,46 @@
  *       length: 142 min
  *       directors: Frank Darabont
  *       stars: Tim Robbins, Morgan Freeman, Bob Gunton
- *       imdb_score: 9.3       
+ *       imdb_score: 9.3
+ *       type: movie   
  */
 
+/**
+ * @swagger
+ *  tags:
+ *   name: Shows
+ *   description: API endpoint to get stored shows.
+ */
 const express = require('express');
 const router = express.Router();
-const {getAllMovie} = require('../services/getAllMovie');
-const {getAllTVShows} = require('../services/getAllTVShows');
-
-router.get('/', async (req,res) => {
-    let shuffle = (req.query.shuffle !== undefined && req.query.shuffle === '') ? true : (req.query.shuffle === 'true');
-    let limit = req.query.limit;
-    let limit_a = limit - Math.floor((Math.random() * (limit - 1) + 1));
-    let limit_b = limit - limit_a;
-
-    let movies = await getAllMovie(limit_a);
-    let tvshows = await getAllTVShows(limit_b);
-    let result = movies.concat(tvshows);
-
-    res.json({
-        count: result.length,
-        data: (shuffle) ? result.sort(()=>Math.random() - 0.5) : result
-    });
-});
+const showsController = require('../controllers/showsController');
+/**
+* @swagger
+*   /shows:
+*    get:
+*     summary: Gets the data from the database based on the query parameters. Default - ALL
+*     tags: [Shows]
+*     parameters:
+*      - in: query
+*        name: limit
+*        schema:
+*         type: integer
+*        description: Amount of the requested data.
+*      - in: query
+*        name: shuffle
+*        schema:
+*         type: boolean
+*        description: Order by database or shuffle up.         
+*     requestBody:
+*      required: false
+*     responses:
+*      "200":
+*       description: Data served.
+*       content:
+*        application/json:
+*         schema:
+*          $ref: '#/components/schemas/Show'  
+ */
+router.get('/', showsController.getShows);
 
 module.exports = router;
