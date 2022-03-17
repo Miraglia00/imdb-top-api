@@ -1,3 +1,5 @@
+require('dotenv/config');
+
 module.exports = {
     definition: {
         openapi: "3.0.0",
@@ -19,9 +21,9 @@ module.exports = {
         },
         servers: [
           {
-            url: "http://localhost:4000/shows",
+            url: process.env.API_URL,
           },
         ],
       },
-      apis: ["./routes/shows.js"],
+      apis: ["./routes/*.js"],
 };
