@@ -28,14 +28,14 @@ const movieModel = db.model('movies', showSchema);
 const tvshowModel = db.model('tvshows', showSchema);
 
 async function scrapeMovies(url) {
-    let emptyMovies = await getEmptyObjectsFormURL(url);
+    let emptyMovies = await getEmptyObjectsFromURL(url);
     
     let savedMovies = [];
 
     await asyncForEach(emptyMovies, async (movie, i) => {
         try{
             let movieObj = await getAdditionalData(movie);
-
+            movieObj['type'] = 'movie';
             if(movieObj !== false) {
                 let movie = new movieModel(movieObj);
     
@@ -52,17 +52,17 @@ async function scrapeMovies(url) {
 }
 
 async function scrapeTVSeries(url) {
-    let emptyTVSeries = await getEmptyObjectsFormURL(url);
+    let emptyTVSeries = await getEmptyObjectsFromURL(url);
     
     let savedSeries = [];
 
     await asyncForEach(emptyTVSeries, async (serial, i) => {
         try{
             let serialObj = await getAdditionalData(serial);
-
+            serialObj['type'] = 'tvshow';
             if(serialObj !== false) {
                 let serial = new tvshowModel(serialObj);
-    
+                
                 let savedSerial = await serial.save();
                 savedSeries.push(savedSerial);
             }
@@ -98,7 +98,7 @@ async function getAdditionalData(dataObj) {
     } 
 }
 
-const getEmptyObjectsFormURL = async (url) => {
+const getEmptyObjectsFromURL = async (url) => {
     let scrapedDataObjects = [];
 
     const {data} = await axios.get(url, {
