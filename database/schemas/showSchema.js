@@ -17,6 +17,7 @@ const showSchema = new Schema({
     directors: {type: String, default: null},
     stars: {type: String, default: null},
     imdb_score: {type: String, default: null},
+    type: {type: String, enum: ['movie', 'tvshow'], default: 'movie'}
 }, {strict: true});
 
 module.exports = showSchema;
