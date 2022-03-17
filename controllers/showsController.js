@@ -3,19 +3,15 @@ const {getAllTVShows} = require('../services/getAllTVShows');
 
 exports.getShows = async (req, res) => {
     let shuffle = (req.query.shuffle !== undefined && req.query.shuffle === '') ? true : (req.query.shuffle === 'true');
-    let limit = req.query.limit;
-    let limit_a = limit - Math.round((Math.random() * (limit - 1) + 1));
-    let limit_b = limit - limit_a;
+    let limit = (typeof req.query.limit !== undefined && parseInt(req.query.limit, 10)) ? parseInt(req.query.limit, 10) : null;
+    let movies = await getAllMovie();
+    let tvshows = await getAllTVShows();
 
-    let movies = await getAllMovie(limit_a);
-    let tvshows = await getAllTVShows(limit_b);
-
-    let result = [];
-    result.push(movies);
-    result.push(tvshows);
-
+    let result = [...movies, ...tvshows];
+    result = (shuffle) ? result.sort(()=>Math.random() - 0.5) : result;
+    result = (limit !== null) ? result.slice(0, limit) : result;
     res.json({
         count: result.length,
-        data: (shuffle) ? result.sort(()=>Math.random() - 0.5) : result
+        data: result
     });
 }
