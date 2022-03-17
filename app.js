@@ -8,15 +8,14 @@ require('./database/db');
 
 const parser = require('body-parser');
 
-const {getAllMovie} = require('./services/getAllMovie');
-
 const showsRoute = require('./routes/shows');
 const userRoute = require('./routes/user');
 const notFound = require('./middlewares/notFound');
 const handleErrors = require('./middlewares/handleErrors');
+const helmet = require('helmet');
 
 app.use(parser.json());
-
+app.use(helmet());
 app.use('/user', userRoute);
 app.use('/shows', showsRoute);
 
