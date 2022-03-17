@@ -1,3 +1,7 @@
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+const swaggerConfig = require('./config/swagger');
+
 const express = require("express");
 
 const app = express();
@@ -12,6 +16,7 @@ const showsRoute = require('./routes/shows');
 const userRoute = require('./routes/user');
 const notFound = require('./middlewares/notFound');
 const handleErrors = require('./middlewares/handleErrors');
+
 const helmet = require('helmet');
 
 app.use(parser.json());
@@ -24,6 +29,13 @@ app.get('/', async (req, res) => {
         "message": "This project can be found on GitHub: https://github.com/zsoltgombocz/imdb-top-api. Further documentation included in the README."
     });
 });
+
+
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerJsdoc(swaggerConfig))
+);
 
 app.use(notFound);
 app.use(handleErrors);
