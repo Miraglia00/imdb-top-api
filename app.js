@@ -16,12 +16,13 @@ const showsRoute = require('./routes/shows');
 const userRoute = require('./routes/user');
 const notFound = require('./middlewares/notFound');
 const handleErrors = require('./middlewares/handleErrors');
+const checkToken = require('./middlewares/checkToken');
 
 const helmet = require('helmet');
 
 app.use(parser.json());
 app.use(helmet());
-app.use('/user', userRoute);
+app.use('/user', checkToken, userRoute);
 app.use('/shows', showsRoute);
 
 app.get('/', async (req, res) => {
