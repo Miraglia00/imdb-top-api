@@ -1,20 +1,30 @@
 const db = require('../database/db');
 const userSchema = require('../database/schemas/userSchema');
 const userModel = db.model('users', userSchema);
-const validateBeforeSave = require('../services/database/validateBeforeSave');
+const validateBySchema = require('../services/database/validateBySchema');
 const checkIfUserExist = require('../services/user/checkIfUserExist');
+const checkLoginCredentials = require('../services/user/checkLoginCredentials');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+exports.checkToken = async (req,res,next) => {
+    if(res.locals.token === true) {
+         const error = new Error('Logging in or registering not needed as a verified token provided in the header.');
+         res.status(400);
+         next(error,'route');
+    }else next();
+}
 
 exports.registerUser = async (req, res, next) => {
     let user = new userModel(req.body);
-    let validation = validateBeforeSave(user);
+    let validation = validateBySchema(user);
 
     if(validation.valid === true) {
          let exist = await checkIfUserExist(user.username);
          if(exist) {
               res.status(400);
               validation.valid = false;
-              validation.errors['username'] = "Username already in use!";
+              validation.errors['general'] = "Username already in use!";
               next(validation);
          }else{
               bcrypt.hash(user.password, 10, async (err, hash) => {
@@ -34,3 +44,26 @@ exports.registerUser = async (req, res, next) => {
          next(validation);
     }
 }
+
+exports.loginUser = async (req, res, next) => {
+     let user = new userModel(req.body);
+     let validation = validateBySchema(user);
+
+     if(validation.valid === true) {
+          const login = await checkLoginCredentials(user.username, user.password);
+          if(login) {
+               const token = jwt.sign(req.body, process.env.JWT_SECRET || 'strongsecret0011');
+               res.header('Authorization', 'Bearer ' + token).json({
+                    message: "Login successful!"
+               });
+          }else{
+               res.status(400);
+               validation.valid = false;
+               validation.errors['general'] = "Provided credentials not found in the database!";
+               next(validation);
+          }
+     }else{
+         res.status(400);
+         next(validation);
+    }
+ }
