@@ -9,7 +9,8 @@ const userSchema = new Schema({
         required: [true, 'This field is required! (username)']
     },
     password: {
-        type: String, 
+        type: String,
+        minlength: [5, 'Minimum character for the username must be at least 5!'], 
         required: [true, 'This field is required! (password)']
     }
 }, {strict: true});
