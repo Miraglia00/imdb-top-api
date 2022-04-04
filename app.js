@@ -12,6 +12,8 @@ require('./database/db');
 
 const parser = require('body-parser');
 
+const cors = require('cors');
+
 const showsRoute = require('./routes/shows');
 const userRoute = require('./routes/user');
 const notFound = require('./middlewares/notFound');
@@ -22,6 +24,7 @@ const helmet = require('helmet');
 
 app.use(parser.json());
 app.use(helmet());
+app.use(cors({exposedHeaders: 'Authorization'}));
 app.use('/user', checkToken, userRoute);
 app.use('/shows', showsRoute);
 
