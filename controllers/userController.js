@@ -15,6 +15,12 @@ exports.checkToken = async (req,res,next) => {
     }else next();
 }
 
+exports.checkIfTokenValid = async (req,res) => {
+     if(res.locals.token===true) {
+          res.status(200).json(res.locals.user);
+     }else res.status(400).json({});
+}
+
 exports.registerUser = async (req, res, next) => {
     let user = new userModel(req.body);
     let validation = validateBySchema(user);
@@ -24,7 +30,7 @@ exports.registerUser = async (req, res, next) => {
          if(exist) {
               res.status(400);
               validation.valid = false;
-              validation.errors['general'] = "Username already in use!";
+              validation.errors['username'] = "Username already in use!";
               next(validation);
          }else{
               bcrypt.hash(user.password, 10, async (err, hash) => {
@@ -52,8 +58,9 @@ exports.loginUser = async (req, res, next) => {
      if(validation.valid === true) {
           const login = await checkLoginCredentials(user.username, user.password);
           if(login) {
-               const token = jwt.sign(req.body, process.env.JWT_SECRET || 'strongsecret0011');
+               const token = jwt.sign({username: req.body.username}, process.env.JWT_SECRET || 'strongsecret0011');
                res.header('Authorization', 'Bearer ' + token).json({
+                    error: {valid: true},
                     message: "Login successful!"
                });
           }else{
