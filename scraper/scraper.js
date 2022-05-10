@@ -27,6 +27,15 @@ const db = require('../database/db');
 const movieModel = db.model('movies', showSchema);
 const tvshowModel = db.model('tvshows', showSchema);
 
+async function checkPoster(imdbid) {
+    try {
+        await axios.get(`http://img.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&i=${imdbid}`);
+        return true;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 async function scrapeMovies(url) {
     let emptyMovies = await getEmptyObjectsFromURL(url);
     
@@ -34,6 +43,7 @@ async function scrapeMovies(url) {
 
     await asyncForEach(emptyMovies, async (movie, i) => {
         try{
+            await checkPoster(movie.movie_id);
             let movieObj = await getAdditionalData(movie);
             movieObj['type'] = 'movie';
             if(movieObj !== false) {
@@ -43,8 +53,7 @@ async function scrapeMovies(url) {
                 savedMovies.push(savedMovie);
             }
         }catch(error) {
-            console.error(error);
-            console.log(`Skipping movie ${movie.movie_id} due to an error. Error: ${error}`);
+            console.log(`Skipping movie ${movie.movie_id} due to an error. ${error}`);
         }
         
     });
@@ -58,6 +67,7 @@ async function scrapeTVSeries(url) {
 
     await asyncForEach(emptyTVSeries, async (serial, i) => {
         try{
+            await checkPoster(serial.movie_id);
             let serialObj = await getAdditionalData(serial);
             serialObj['type'] = 'tvshow';
             if(serialObj !== false) {
@@ -67,8 +77,7 @@ async function scrapeTVSeries(url) {
                 savedSeries.push(savedSerial);
             }
         }catch(error) {
-            console.error(error);
-            console.log(`Skipping serial ${serial.movie_id} due to an error. Error: ${error}`);
+            console.log(`Skipping serial ${serial.movie_id} due to an error. ${error}`);
         }
         
     });
